@@ -104,4 +104,22 @@ class ProductDataList {
         return ret
     }
 
+    // 製品名取得
+    fun getProductName(product_id: Int) : String {
+        var ret: String = ""
+
+        if (dataList != null) {
+            for (data in dataList!!) {
+                // 製品IDの一致チェック
+                if (data.productId == product_id) {
+                    // 製品名を登録
+                    ret = data.productName
+                    break
+                }
+            }
+        }
+
+        return ret
+    }
+
 }

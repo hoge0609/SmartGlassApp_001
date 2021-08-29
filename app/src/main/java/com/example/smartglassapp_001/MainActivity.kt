@@ -8,11 +8,6 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
 
 /*
 * for VUZIX M400
@@ -24,15 +19,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     val REQUEST_CODE = 1000
     // QRカメラクラス
     var qrCamera: QrCamera? = null
-
-    // 製品データリストクラス
-    var productDataList: ProductDataList? = null
-    // 部品データクラスリスト
-    var partsDataList: PartsDataList? = null
-    // 製品構成データクラスリスト
-    var productStructureDataList: ProductStructureDataList? = null
-    // 部品在庫データクラスリスト
-    var partsInventoryDataList: PartsInventoryDataList? = null
 
     // アクテビティ作成
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,49 +41,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 //        imageView_02.setOnClickListener(this)
 //        imageView_03.setOnClickListener(this)
 
-        // QRカメラクラス初期化
-        qrCamera = QrCamera(qr_view_01, textView_01)
-        // QRコード読み取り開始
-        qrCamera?.resumeQrCamera()
+        try {
+            // マスターデータ初期化
+            if (initMasterData() == false) {
+                throw Exception()
+            }
 
+            // QRカメラクラス初期化
+            qrCamera = QrCamera(qr_view_01, textView_01)
+            // QRコード読み取り開始
+            qrCamera?.resumeQrCamera()
 
-        // 製品データクラスリスト
-        var productDataList: ProductDataList = ProductDataList()
-        if (productDataList.checkFlag == false) {
+        } catch (e: Exception) {
+            // アプリ終了
+            closeApp()
         }
-
-        // 部品データクラスリスト
-        var partsDataList: PartsDataList = PartsDataList()
-        if (partsDataList.checkFlag == false) {
-        }
-
-        // ターゲット部品在庫データクラス
-        var targetPartsInventoryData: TargetPartsInventoryData = TargetPartsInventoryData(10)
-        if (targetPartsInventoryData.checkFlag == false) {
-        }
-
-        // ターゲット製品構成データクラス
-        var targetProductStructureData: TargetProductStructureData = TargetProductStructureData(5)
-        if (targetProductStructureData.checkFlag == false) {
-        }
-
-
-
-
-    /*
-        // 製品構成データクラスリスト
-        var productStructureDataList: ProductStructureDataList = ProductStructureDataList()
-        if (productStructureDataList.checkFlag == false) {
-        }
-
-        // 部品在庫データクラスリスト
-        var partsInventoryDataList: PartsInventoryDataList = PartsInventoryDataList()
-        if (partsInventoryDataList.checkFlag == false) {
-        }
-*/
-
-
-
     }
 
     // パーミッションのチェック
@@ -298,6 +256,38 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             KeyEvent.KEYCODE_BACK -> { "後ボタン長押し" }
             else -> { keyCode.toString() }
         }
+    }
+
+    // マスターデータ初期化
+    fun initMasterData() : Boolean {
+        var ret: Boolean = false
+        var msg: String = ""
+
+        try {
+            // 製品データクラスリスト初期化
+            DbAccess.productDataList = ProductDataList()
+            if (DbAccess.productDataList?.checkFlag == false) {
+                msg = "ProductDataList check error"
+                throw Exception()
+            }
+
+            // 部品データクラスリスト初期化
+            DbAccess.partsDataList = PartsDataList()
+            if (DbAccess.partsDataList?.checkFlag == false) {
+                msg = "PartsDataList check error"
+                throw Exception()
+            }
+
+            ret = true
+        } catch (e: Exception) {
+            if (msg.length < 1) {
+                msg = e.message.toString()
+            }
+            MessageUtils.toast("MainActivity::initMasterData -> " + msg)
+            ret = false
+        }
+
+        return ret
     }
 
 }

@@ -104,4 +104,22 @@ class PartsDataList {
         return ret
     }
 
+    // 部品名取得
+    fun getPartsName(parts_id: Int) : String {
+        var ret: String = ""
+
+        if (dataList != null) {
+            for (data in dataList!!) {
+                // 部品IDの一致チェック
+                if (data.partsId == parts_id) {
+                    // 部品名を登録
+                    ret = data.partsName
+                    break
+                }
+            }
+        }
+
+        return ret
+    }
+
 }

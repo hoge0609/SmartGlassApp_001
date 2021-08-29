@@ -35,16 +35,18 @@ class QrCamera {
 
         qrView.decodeContinuous(object: BarcodeCallback {
             override fun barcodeResult(result: BarcodeResult?) {
+                var value: Int? = 0
                 if (result == null) {
                     return
                 }
-                if (qrText != result.text) {
+                // 読み込んだ文字列を数値に変換
+                value = result.text.toIntOrNull()
+
+                if ((value != null) && (qrText != result.text)) {
                     // バーコードテキストを更新
                     qrText = result.text
-                    // テキストビューに表示
-                    textView_01?.text = qrText
-                    // TextView_08テキストの登録
-                    MessageUtils.toast(qrText)
+                    // 部品データ文字列取得、テキストビューに表示
+                    textView_01?.text = DbAccess.getPartsDataString(value)
                 }
             }
 
