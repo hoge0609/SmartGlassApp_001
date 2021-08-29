@@ -3,35 +3,35 @@ package com.example.smartglassapp_001
 import android.content.Context
 
 // アプリケーションコンテキストクラス
-public class AppContext {
+class AppContext {
     // static変数・関数定義
     companion object {
         // インスタンス
-        private var m_instance: AppContext? = null
+        private var instance: AppContext? = null
 
         // アプリケーションコンテキスト登録
-        public fun setAppContext(appContext: Context) {
+        fun setAppContext(appContext: Context) {
             // コンストラクタ呼び出し
-            m_instance = AppContext(appContext)
+            instance = AppContext(appContext)
         }
 
         // インスタンス取得
-        public fun getInstance(): AppContext? {
-            return AppContext.m_instance
+        fun getInstance(): AppContext? {
+            return AppContext.instance
         }
 
         // アプリケーションコンテキスト取得
-        public fun getAppContext(): Context? {
-            return AppContext.getInstance()?.m_appContext
+        fun getAppContext(): Context? {
+            return AppContext.getInstance()?.appContext
         }
     }
 
     // アプリケーションコンテキスト
-    private var m_appContext: Context? = null
+    private var appContext: Context? = null
 
     // コンストラクタ
-    constructor(appContext: Context) {
-        this.m_appContext = appContext
+    constructor(context: Context) {
+        appContext = context
     }
 
 }

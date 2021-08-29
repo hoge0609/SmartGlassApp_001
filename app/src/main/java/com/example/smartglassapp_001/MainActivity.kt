@@ -8,6 +8,11 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 /*
 * for VUZIX M400
@@ -16,10 +21,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 // メインクラス
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     // パーミッションリクエストコード
-    private val REQUEST_CODE = 1000
-
+    val REQUEST_CODE = 1000
     // QRカメラクラス
-    var m_qrCamera: QrCamera? = null
+    var qrCamera: QrCamera? = null
+
+    // 製品データリストクラス
+    var productDataList: ProductDataList? = null
+    // 部品データクラスリスト
+    var partsDataList: PartsDataList? = null
+    // 製品構成データクラスリスト
+    var productStructureDataList: ProductStructureDataList? = null
+    // 部品在庫データクラスリスト
+    var partsInventoryDataList: PartsInventoryDataList? = null
 
     // アクテビティ作成
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,9 +56,48 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 //        imageView_03.setOnClickListener(this)
 
         // QRカメラクラス初期化
-        m_qrCamera = QrCamera(qr_view_01, textView_01)
+        qrCamera = QrCamera(qr_view_01, textView_01)
         // QRコード読み取り開始
-        m_qrCamera?.resumeQrCamera()
+        qrCamera?.resumeQrCamera()
+
+
+        // 製品データクラスリスト
+        var productDataList: ProductDataList = ProductDataList()
+        if (productDataList.checkFlag == false) {
+        }
+
+        // 部品データクラスリスト
+        var partsDataList: PartsDataList = PartsDataList()
+        if (partsDataList.checkFlag == false) {
+        }
+
+        // ターゲット部品在庫データクラス
+        var targetPartsInventoryData: TargetPartsInventoryData = TargetPartsInventoryData(10)
+        if (targetPartsInventoryData.checkFlag == false) {
+        }
+
+        // ターゲット製品構成データクラス
+        var targetProductStructureData: TargetProductStructureData = TargetProductStructureData(5)
+        if (targetProductStructureData.checkFlag == false) {
+        }
+
+
+
+
+    /*
+        // 製品構成データクラスリスト
+        var productStructureDataList: ProductStructureDataList = ProductStructureDataList()
+        if (productStructureDataList.checkFlag == false) {
+        }
+
+        // 部品在庫データクラスリスト
+        var partsInventoryDataList: PartsInventoryDataList = PartsInventoryDataList()
+        if (partsInventoryDataList.checkFlag == false) {
+        }
+*/
+
+
+
     }
 
     // パーミッションのチェック
@@ -109,7 +161,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onDestroy()
 
         // QRコード読み取り停止
-        m_qrCamera?.pauseQrCamera()
+        qrCamera?.pauseQrCamera()
     }
 
     // アクティビティ再開
@@ -117,7 +169,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onResume()
 
         // QRコード読み取り開始
-        m_qrCamera?.resumeQrCamera()
+        qrCamera?.resumeQrCamera()
     }
 
     // アクティビティ停止
@@ -125,7 +177,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onPause()
 
         // QRコード読み取り停止
-        m_qrCamera?.pauseQrCamera()
+        qrCamera?.pauseQrCamera()
     }
 
     // ウィンドウフォーカスの変更通知イベント
